@@ -1,6 +1,7 @@
 import { AxiosResponse } from "axios";
 import { createContext, ReactNode, useState } from "react";
 import { api } from "../services/api";
+import Router from "next/router";
 
 type SigniInCredentials = {
     email: string,
@@ -9,6 +10,7 @@ type SigniInCredentials = {
 
 type AuthContextData = {
     signIn(credentials: SigniInCredentials): Promise<void>;
+    user: UserData,
     isAuth: boolean
 }
 
@@ -25,9 +27,8 @@ type UserData = {
 export const AuthContext = createContext({} as AuthContextData);
 export function AuthProvider ({children} : AuthProviderProps) {
 
-    const [userData, setUserData] = useState<UserData>();
-
-    const isAuth = false;
+    const [userData, setUserData] = useState<UserData>({} as UserData);
+    const isAuth = !!userData;
 
     async function signIn ({email, password} : SigniInCredentials) {
         try {
@@ -40,14 +41,15 @@ export function AuthProvider ({children} : AuthProviderProps) {
                 roles
             })
 
-            console.log(userData);
+            Router.push("/dashboard");
+            
         } catch(error) {
             console.log(error);
         }
     }
 
     return (
-        <AuthContext.Provider value={{signIn, isAuth}}>
+        <AuthContext.Provider value={{user: userData, signIn, isAuth}}>
             {children}
         </AuthContext.Provider>
     )
