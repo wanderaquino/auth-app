@@ -2,6 +2,7 @@ import { AxiosResponse } from "axios";
 import { createContext, ReactNode, useState } from "react";
 import { api } from "../services/api";
 import Router from "next/router";
+import {setCookie} from "nookies";
 
 type SigniInCredentials = {
     email: string,
@@ -33,13 +34,16 @@ export function AuthProvider ({children} : AuthProviderProps) {
     async function signIn ({email, password} : SigniInCredentials) {
         try {
             const response : AxiosResponse<UserData> = await api.post("/sessions",{email, password});
-            const {permissions, roles} = response.data;
+            const {token, refreshToken, permissions, roles} = response.data;
+            
+            setCookie(undefined, "nextAuth.token", token || "", {maxAge: 60* 60 * 24 *30 });
+            setCookie(undefined, "nextAuth.refreshToken", refreshToken || "", {maxAge: 60* 60 * 24 *30 });
 
             setUserData({
                 email,
                 permissions,
                 roles
-            })
+            } as Omit<UserData, "token" | "refreshToken">)
 
             Router.push("/dashboard");
             
