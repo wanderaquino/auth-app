@@ -20,6 +20,8 @@ type AuthProviderProps = {
 }
 
 type UserData = {
+    token?: string,
+    refreshToken?: string,
     email: string,
     permissions: string[],
     roles: string[]
