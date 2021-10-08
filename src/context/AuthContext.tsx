@@ -35,7 +35,10 @@ export function AuthProvider ({children} : AuthProviderProps) {
         const {"nextAuth.token" : token} = cookies;
 
         if (token) {
-            api.get("/me").then(response => setUserData(response.data as UserData));
+            api.get("/me").then(response => {
+                const {email, permissions, roles} = response.data;
+                setUserData({email, permissions, roles} as Omit<UserData, "token" | "refreshToken">);
+            })
         }
     }, []);
 
