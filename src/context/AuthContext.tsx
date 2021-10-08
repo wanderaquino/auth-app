@@ -1,8 +1,8 @@
 import { AxiosResponse } from "axios";
-import { createContext, ReactNode, useState } from "react";
+import { createContext, ReactNode, useEffect, useState } from "react";
 import { api } from "../services/api";
 import Router from "next/router";
-import {setCookie} from "nookies";
+import {parseCookies, setCookie} from "nookies";
 
 type SigniInCredentials = {
     email: string,
@@ -30,6 +30,15 @@ type UserData = {
 export const AuthContext = createContext({} as AuthContextData);
 export function AuthProvider ({children} : AuthProviderProps) {
 
+    useEffect(() => {
+        const cookies = parseCookies();
+        const {"nextAuth.token" : token} = cookies;
+
+        if (token) {
+            api.get("/me").then(response => setUserData(response.data as UserData));
+        }
+    }, []);
+
     const [userData, setUserData] = useState<UserData>({} as UserData);
     const isAuth = !!userData;
 
@@ -37,7 +46,7 @@ export function AuthProvider ({children} : AuthProviderProps) {
         try {
             const response : AxiosResponse<UserData> = await api.post("/sessions",{email, password});
             const {token, refreshToken, permissions, roles} = response.data;
-            
+
             setCookie(undefined, "nextAuth.token", token || "", {maxAge: 60* 60 * 24 *30 });
             setCookie(undefined, "nextAuth.refreshToken", refreshToken || "", {maxAge: 60* 60 * 24 *30 });
 
@@ -47,6 +56,10 @@ export function AuthProvider ({children} : AuthProviderProps) {
                 roles
             } as Omit<UserData, "token" | "refreshToken">)
 
+            if (api.defaults.headers){
+                api.defaults.headers["Authorization"] = `Bearer ${token}`
+            };
+            
             Router.push("/dashboard");
             
         } catch(error) {
