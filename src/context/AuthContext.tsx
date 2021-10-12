@@ -2,7 +2,7 @@ import { AxiosResponse } from "axios";
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { api } from "../services/api";
 import Router from "next/router";
-import {parseCookies, setCookie} from "nookies";
+import {destroyCookie, parseCookies, setCookie} from "nookies";
 
 type SigniInCredentials = {
     email: string,
@@ -28,6 +28,13 @@ type UserData = {
 }
 
 export const AuthContext = createContext({} as AuthContextData);
+
+export function signOut() {
+    destroyCookie(undefined, "nextAuth.token");
+    destroyCookie(undefined, "nextAuth.refreshToken");
+    Router.push("/");
+};
+
 export function AuthProvider ({children} : AuthProviderProps) {
 
     useEffect(() => {
@@ -38,6 +45,8 @@ export function AuthProvider ({children} : AuthProviderProps) {
             api.get("/me").then(response => {
                 const {email, permissions, roles} = response.data;
                 setUserData({email, permissions, roles} as Omit<UserData, "token" | "refreshToken">);
+            }).catch(() => {
+                signOut();
             })
         }
     }, []);
