@@ -3,7 +3,6 @@ import { FormEvent, useContext, useState } from 'react';
 import { GetServerSideProps } from 'next';
 import { AuthContext } from '../context/AuthContext';
 import styles from "../styles/home.module.css";
-import { parseCookies } from 'nookies';
 import { withSSRGuest } from '../utils/withSSRGuest';
 
 const Home: NextPage = () => {
