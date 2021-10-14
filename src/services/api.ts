@@ -9,9 +9,6 @@ let failedRequestsQueue = [] as any;
 
 export function setupApiClient(context : GetServerSidePropsContext | undefined) {
     let cookies = parseCookies(context);
-    console.log("Dentro da function", cookies);
-
-    
     const api = axios.create({
         baseURL: "http://localhost:3333/",
         headers: {
