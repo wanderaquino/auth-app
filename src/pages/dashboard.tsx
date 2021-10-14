@@ -2,6 +2,7 @@ import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { useContext } from "react";
 import {AuthContext} from "../context/AuthContext";
 import { setupApiClient } from "../services/api";
+import { AuthTokenError } from "../services/errors/AuthTokenError";
 import { withSSRAuth } from '../utils/withSSRAuth';
 
 
@@ -14,11 +15,13 @@ export default function Dashboard () {
 }
 
 export const getServerSideProps : GetServerSideProps = withSSRAuth(async (context : GetServerSidePropsContext) => {
-    console.log("Do contexto",context);
     const apiClient = setupApiClient(context)
+    try {
     const response = await apiClient.get("/me");
 
-    console.log(response);
+    } catch(error){
+        console.log(error instanceof AuthTokenError)
+    }
 
     return {
         props: {}
