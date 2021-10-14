@@ -76,9 +76,13 @@ export function setupApiClient(context : GetServerSidePropsContext | undefined) 
                         }
                     })
                 })
+            } else {
+                if(process.browser) {
+                    signOut();
+                } else {
+                    return Promise.reject(new AuthTokenError());
+                }
             }
-        } else {
-            signOut();
         }
     
         return Promise.reject(error);
