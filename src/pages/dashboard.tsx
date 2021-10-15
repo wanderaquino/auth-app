@@ -1,6 +1,6 @@
-import { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult } from "next";
+import { GetServerSidePropsContext } from "next";
 import { destroyCookie } from "nookies";
-import { useContext, VoidFunctionComponent } from "react";
+import { useContext } from "react";
 import {AuthContext} from "../context/AuthContext";
 import { setupApiClient } from "../services/api";
 import { withSSRAuth } from '../utils/withSSRAuth';
