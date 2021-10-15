@@ -1,8 +1,8 @@
-import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import { useContext } from "react";
+import { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult } from "next";
+import { destroyCookie } from "nookies";
+import { useContext, VoidFunctionComponent } from "react";
 import {AuthContext} from "../context/AuthContext";
 import { setupApiClient } from "../services/api";
-import { AuthTokenError } from "../services/errors/AuthTokenError";
 import { withSSRAuth } from '../utils/withSSRAuth';
 
 
@@ -14,13 +14,22 @@ export default function Dashboard () {
     )
 }
 
-export const getServerSideProps : GetServerSideProps = withSSRAuth(async (context : GetServerSidePropsContext) => {
-    const apiClient = setupApiClient(context)
+export const getServerSideProps = withSSRAuth(async (context : GetServerSidePropsContext) => {
+    const apiClient = setupApiClient(context);
+
     try {
-    const response = await apiClient.get("/me");
+        const response = await apiClient.get("/me");
 
     } catch(error){
-        console.log(error instanceof AuthTokenError)
+        destroyCookie(context, "nextAuth.token");
+        destroyCookie(context, "nextAuth.refreshToken");
+
+        return {
+            redirect: {
+                destination: "/",
+                permanent: false
+            }
+        }
     }
 
     return {
