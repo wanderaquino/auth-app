@@ -2,13 +2,13 @@ import { GetServerSidePropsContext } from "next";
 import { destroyCookie } from "nookies";
 import { useContext } from "react";
 import { Can } from "../components/Can";
-import {AuthContext} from "../context/AuthContext";
+import {AuthContext, signOut} from "../context/AuthContext";
 import { setupApiClient } from "../services/api";
 import { withSSRAuth } from '../utils/withSSRAuth';
 
 
 export default function Dashboard () {
-    const {user} = useContext(AuthContext);
+    const {user, signOut} = useContext(AuthContext);
 
     return (
         <>
@@ -19,6 +19,7 @@ export default function Dashboard () {
                 <h2>Métricas</h2>
             </Can>
         }
+        <button onClick={signOut}>Sign Out</button>
         </>
     )
 }
