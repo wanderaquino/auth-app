@@ -9,12 +9,11 @@ const Home: NextPage = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const {isAuth, signIn} = useContext(AuthContext);
+  const {signIn} = useContext(AuthContext);
   
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
     const data = {email, password};
-
     signIn(data);
   }
 
