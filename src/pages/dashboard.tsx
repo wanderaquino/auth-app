@@ -1,6 +1,6 @@
 import { GetServerSidePropsContext } from "next";
 import { destroyCookie } from "nookies";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { Can } from "../components/Can";
 import {AuthContext, signOut} from "../context/AuthContext";
 import { setupApiClient } from "../services/api";
@@ -15,7 +15,7 @@ export default function Dashboard () {
         <h1>Dashboard!!! {user.email}</h1>
 
         {
-            <Can permissions={["metrics.list"]}>
+            <Can permissions={user.permissions} roles={user.roles}>
                 <h2>Métricas</h2>
             </Can>
         }
