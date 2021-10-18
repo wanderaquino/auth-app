@@ -30,13 +30,28 @@ type UserData = {
 
 export const AuthContext = createContext({} as AuthContextData);
 
+let authChannel : BroadcastChannel;
+
 export function signOut() {
     destroyCookie(undefined, "nextAuth.token");
     destroyCookie(undefined, "nextAuth.refreshToken");
+    authChannel.postMessage("logout");
     Router.push("/");
 };
 
 export function AuthProvider ({children} : AuthProviderProps) {
+
+    useEffect(() => {
+        authChannel = new BroadcastChannel("auth");
+        authChannel.onmessage = (message) => {
+            switch(message.data) {
+                case "logout": 
+                    signOut();
+                    break;
+                default: break;
+            }
+        }
+    }, [])
 
     useEffect(() => {
         const cookies = parseCookies();
