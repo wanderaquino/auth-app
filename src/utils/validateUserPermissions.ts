@@ -21,16 +21,20 @@ export function validateUserPermissions({
         if(!hasAllPermissions) {
             return false;
         }
+    } else {
+        return false
     }
 
 
-    if(roles != undefined && roles?.length > 0) {
+    if(roles !== undefined && roles?.length > 0) {
         const hasAllRoles = roles.every((roles) => {
             return user.roles.includes(roles)
         })
         if(!hasAllRoles) {
             return false;
         }
+    } else {
+        return false
     }
 
     return true;
